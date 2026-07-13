@@ -1,6 +1,6 @@
 <div align="center">
 
-# SyncSphere — Real-Time Chat Architecture
+# <img src="./public/logo.svg" alt="SyncSphere Logo" width="40" height="40" style="vertical-align: -8px;" /> SyncSphere — Real-Time Chat Architecture
 
 **A highly scalable, real-time chat application built with Next.js, Node.js, WebSockets, Redis Pub/Sub, and PostgreSQL.**
 

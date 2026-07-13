@@ -212,10 +212,14 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center font-bold text-xl mr-3 shadow-sm shadow-primary-600/20">
-                N
+              <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center mr-3 shadow-sm flex-shrink-0">
+                <svg className="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3" fill="currentColor" />
+                  <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(45 12 12)" />
+                  <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(-45 12 12)" />
+                </svg>
               </div>
-              <h1 className="text-xl font-bold text-gray-900 tracking-tight">Nexus Chat</h1>
+              <h1 className="text-xl font-bold text-gray-900 tracking-tight">SyncSphere</h1>
             </div>
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex items-center text-sm font-medium text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full">
