@@ -4,7 +4,14 @@
 
 **A highly scalable, real-time chat application built with Next.js, Node.js, WebSockets, Redis Pub/Sub, and PostgreSQL.**
 
-![SyncSphere UI Banner](./public/banner.jpg)
+<div align="center" style="margin-top: 20px;">
+  <img src="https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" />
+  <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+</div>
 
 </div>
 
@@ -47,64 +54,51 @@
 
 ---
 
-## 🚀 System Architecture
+## 1. System Architecture Diagram
+
+This diagram shows how all components connect and interact to provide a seamless, horizontally scalable chat experience.
 
 ```mermaid
-graph TB
-    subgraph ClientLayer["Client Layer (Next.js)"]
-        UI["React 19 Components<br/>TailwindCSS"]
-        AUTH_CTX["Auth Context & JWT"]
-        WS_HOOKS["Custom Hooks<br/>useWebSocket · useMessages · useTyping"]
-    end
-
-    subgraph ServerLayer["WebSocket & API Layer (Node.js)"]
-        subgraph API["REST API"]
-            CTRL["Controllers<br/>Auth · Rooms · Messages"]
-            AUTH_MW["JWT Middleware"]
-        end
-
-        subgraph WS["WebSocket Server (ws)"]
-            WSS["WS Connection Manager"]
-            HANDLERS["Event Handlers<br/>Typing · Read Receipts · Messages"]
-        end
-    end
-
-    subgraph MessageBroker["Message Broker (Redis)"]
-        REDIS_PUB["Redis Publisher"]
-        REDIS_SUB["Redis Subscriber"]
-    end
-
-    subgraph Database["Persistent Storage"]
-        PG["PostgreSQL (chatdb)"]
-        PRISMA["Prisma ORM"]
-    end
-
-    UI --> AUTH_CTX
-    UI --> WS_HOOKS
-    WS_HOOKS -->|"HTTP/REST"| AUTH_MW
-    WS_HOOKS -->|"WebSocket wss://"| WSS
+graph TD
+    Client["Client Browser (React UI)"]
     
-    AUTH_MW --> CTRL
-    CTRL --> PRISMA
+    subgraph NextJS [Frontend Environment]
+        Next["Next.js Application"]
+    end
     
-    WSS --> HANDLERS
-    HANDLERS -->|"Publish Message"| REDIS_PUB
-    REDIS_SUB -->|"Receive Message"| WSS
+    subgraph BackendEnvironment [Backend Environment]
+        API["REST API (Express)"]
+        WSS["Native WebSocket Server (ws)"]
+    end
     
-    HANDLERS --> PRISMA
-    PRISMA --> PG
+    subgraph Infrastructure [Infrastructure]
+        Redis[(Redis Pub/Sub)]
+        DB[(PostgreSQL via Prisma)]
+    end
+    
+    Client -->|"HTTP GET/POST"| Next
+    Client -->|"WebSocket (wss)"| WSS
+    Next -->|"API Proxy"| API
+    
+    API --> DB
+    WSS --> DB
+    
+    WSS -->|"Publish/Subscribe"| Redis
+    API -->|"Publish Events"| Redis
 
-    style ClientLayer fill:#0f172a,stroke:#3b82f6,color:#fff
-    style ServerLayer fill:#1e1b4b,stroke:#8b5cf6,color:#fff
-    style MessageBroker fill:#7f1d1d,stroke:#ef4444,color:#fff
-    style Database fill:#14532d,stroke:#22c55e,color:#fff
+    style Client fill:#0f172a,stroke:#3b82f6,color:#fff
+    style Next fill:#1e1b4b,stroke:#8b5cf6,color:#fff
+    style API fill:#1e1b4b,stroke:#8b5cf6,color:#fff
+    style WSS fill:#1e1b4b,stroke:#8b5cf6,color:#fff
+    style Redis fill:#7f1d1d,stroke:#ef4444,color:#fff
+    style DB fill:#14532d,stroke:#22c55e,color:#fff
 ```
-
-*The diagram above illustrates how SyncSphere achieves true horizontal scalability. By introducing Redis Pub/Sub as a message broker, any number of WebSocket backend instances can be spun up. When a user sends a message to Instance A, it publishes to Redis, and Instance B receives it and forwards it to the intended recipient.*
 
 ---
 
-## 📁 Project Structure
+## 2. Folder Structure
+
+A clean, monorepo-style structure separating the frontend application from the scalable backend architecture.
 
 ```text
 SyncSphere/
@@ -122,9 +116,144 @@ SyncSphere/
 │   ├── prisma/
 │   │   └── schema.prisma            # DB Models (User, Room, Message)
 │   └── Dockerfile                   # Backend Container Config
-├── public/                          # Static Assets
+├── public/                          # Static Assets (Images, Icons)
 ├── docker-compose.yml               # Multi-container orchestration
 └── next.config.ts                   # Next.js Proxy Configuration
+```
+
+---
+
+## 3. Authentication Flow
+
+How users securely authenticate and establish both HTTP sessions and WebSocket connections.
+
+```mermaid
+sequenceDiagram
+    participant U as User Browser
+    participant N as Next.js Frontend
+    participant A as Auth API (Express)
+    participant DB as PostgreSQL
+
+    U->>N: Enters Credentials
+    N->>A: POST /api/auth/login
+    A->>DB: Query User & Verify Password
+    DB-->>A: User Verified
+    A-->>N: Returns JWT Token
+    N->>U: Stores Token in localStorage
+    
+    Note over U,DB: WebSocket Connection Establishment
+    U->>A: Connects to wss://.../?token=JWT
+    A->>A: Verifies JWT Token
+    A-->>U: WebSocket Connection Established
+```
+
+---
+
+## 4. Database ER Diagram
+
+The core schema design managed via Prisma.
+
+```mermaid
+erDiagram
+    User {
+        String id PK
+        String username UK
+        String password
+        String status
+        DateTime lastSeen
+        DateTime createdAt
+    }
+    
+    Room {
+        String id PK
+        String name
+        String adminId FK
+        DateTime createdAt
+    }
+    
+    RoomMember {
+        String id PK
+        String roomId FK
+        String userId FK
+        String role
+        DateTime joinedAt
+    }
+    
+    Message {
+        String id PK
+        String roomId FK
+        String senderId FK
+        String content
+        Boolean isEdited
+        Boolean isDeleted
+        DateTime createdAt
+    }
+    
+    ReadReceipt {
+        String id PK
+        String messageId FK
+        String userId FK
+        String status
+    }
+
+    User ||--o{ Room : "Administers"
+    User ||--o{ RoomMember : "Is part of"
+    User ||--o{ Message : "Sends"
+    Room ||--o{ RoomMember : "Contains"
+    Room ||--o{ Message : "Houses"
+    Message ||--o{ ReadReceipt : "Has"
+    User ||--o{ ReadReceipt : "Owns"
+```
+
+---
+
+## 5. Request Flow
+
+The standard lifecycle of a REST API request in SyncSphere.
+
+```mermaid
+flowchart TD
+    Req([Browser Request]) --> API[Next.js Proxy]
+    API --> Express[Express Route Handler]
+    Express --> Auth{JWT Middleware}
+    Auth -->|Invalid| 401[401 Unauthorized]
+    Auth -->|Valid| Controller[Controller Logic]
+    Controller --> DB[(PostgreSQL)]
+    DB --> Controller
+    Controller --> Res([JSON Response])
+```
+
+---
+
+## 6. Real-time Message Flow ⭐
+
+This is how SyncSphere achieves real-time communication across multiple, load-balanced WebSocket servers using Redis Pub/Sub.
+
+```mermaid
+sequenceDiagram
+    participant A as User A (Client)
+    participant WS1 as WebSocket Server 1
+    participant DB as PostgreSQL
+    participant R as Redis (Pub/Sub)
+    participant WS2 as WebSocket Server 2
+    participant B as User B (Client)
+
+    A->>WS1: { type: "message", payload: "Hello!" }
+    
+    note over WS1,DB: Server 1 persists message
+    WS1->>DB: INSERT INTO "Message"
+    DB-->>WS1: Success (returns message ID)
+    
+    note over WS1,R: Server 1 publishes to broker
+    WS1->>R: PUBLISH room_id "{ ...message }"
+    
+    note over R,WS2: All subscribed servers receive message
+    R-->>WS1: Message Event
+    R-->>WS2: Message Event
+    
+    note over WS1,WS2: Servers broadcast to local connections
+    WS1-->>A: { type: "new_message", payload: "Hello!" }
+    WS2-->>B: { type: "new_message", payload: "Hello!" }
 ```
 
 ---
