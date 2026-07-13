@@ -10,7 +10,8 @@ import messageRoutes from './routes/messages.js';
 import { setupWebSocket } from './ws/handler.js';
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+import { env } from './env.js';
+const PORT = env.PORT;
 
 // Middleware
 app.use(cors());

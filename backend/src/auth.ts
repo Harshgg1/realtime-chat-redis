@@ -2,7 +2,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'chat-secret-key';
+import { env } from './env.js';
+export const JWT_SECRET = env.JWT_SECRET;
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);

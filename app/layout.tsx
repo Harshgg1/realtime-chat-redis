@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "A highly scalable, real-time chat application.",
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,6 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster theme="dark" richColors />
         {children}
       </body>
     </html>

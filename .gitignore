@@ -39,4 +39,4 @@ Thumbs.db
 coverage/
 
 # Misc
-*.tsbuildinf
+*.tsbuildinfo

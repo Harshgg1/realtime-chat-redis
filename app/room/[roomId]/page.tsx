@@ -74,14 +74,14 @@ export default function RoomPage() {
   // --- Loading state ---
   if (!token || !currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
+    <div className="flex h-screen bg-zinc-950 font-sans overflow-hidden">
 
       {/* Sidebar - Members */}
       <Sidebar
@@ -91,7 +91,7 @@ export default function RoomPage() {
       />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-full bg-white relative">
+      <div className="flex-1 flex flex-col min-w-0 h-full bg-zinc-950 relative">
 
         <ChatHeader
           roomName={roomName}

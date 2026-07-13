@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { Menu, Check, Copy, Search, X, ArrowLeft, LogOut } from 'lucide-react';
 
 interface ChatHeaderProps {
   roomName: string;
@@ -39,36 +40,30 @@ export default function ChatHeader({
   return (
     <>
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center justify-between h-16 shadow-sm z-10">
+      <div className="px-4 py-3 border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md flex items-center justify-between h-16 shadow-sm z-10 sticky top-0">
         <div className="flex items-center min-w-0">
-          <button className="md:hidden mr-3 text-gray-500 hover:text-gray-700 cursor-pointer" onClick={onToggleSidebar}>
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+          <button className="md:hidden mr-3 text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors" onClick={onToggleSidebar}>
+            <Menu className="w-6 h-6" />
           </button>
           <div className="flex flex-col min-w-0 mr-4">
             <div className="flex items-center">
-              <h1 className="text-lg font-bold text-gray-900 truncate">
+              <h1 className="text-lg font-bold text-zinc-50 truncate">
                 {roomName || roomId}
               </h1>
-              <span className={`ml-2 flex-shrink-0 w-2 h-2 rounded-full ${wsStatus === 'connected' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : wsStatus === 'connecting' ? 'bg-yellow-500' : 'bg-red-500'}`} title={`WebSocket: ${wsStatus}`}></span>
+              <span className={`ml-2 flex-shrink-0 w-2 h-2 rounded-full ${wsStatus === 'connected' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : wsStatus === 'connecting' ? 'bg-amber-500' : 'bg-red-500'}`} title={`WebSocket: ${wsStatus}`}></span>
             </div>
-            <div className="flex items-center mt-0.5 text-xs text-gray-500">
+            <div className="flex items-center mt-0.5 text-xs text-zinc-500">
               <span className="mr-1.5 opacity-70">ID:</span>
               <div 
-                className="flex items-center bg-gray-50 hover:bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200 transition-colors cursor-pointer group/copy"
+                className="flex items-center bg-zinc-900 hover:bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-800 transition-colors cursor-pointer group/copy"
                 onClick={handleCopy}
                 title="Copy Room ID"
               >
-                <span className="font-mono text-[11px] text-gray-600 mr-1.5 truncate max-w-[100px] sm:max-w-none">{roomId}</span>
+                <span className="font-mono text-[11px] text-zinc-400 mr-1.5 truncate max-w-[100px] sm:max-w-none">{roomId}</span>
                 {copiedId === roomId ? (
-                  <svg className="w-3 h-3 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
+                  <Check className="w-3 h-3 text-emerald-500 flex-shrink-0" />
                 ) : (
-                  <svg className="w-3 h-3 text-gray-400 group-hover/copy:text-primary-500 transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
+                  <Copy className="w-3 h-3 text-zinc-600 group-hover/copy:text-teal-400 transition-colors flex-shrink-0" />
                 )}
               </div>
             </div>
@@ -83,51 +78,39 @@ export default function ChatHeader({
               placeholder="Search..."
               value={searchInput}
               onChange={(e) => onSearchInputChange(e.target.value)}
-              className="w-48 pl-9 pr-8 py-1.5 bg-gray-100 border-transparent rounded-full text-sm focus:border-primary-300 focus:bg-white focus:ring-2 focus:ring-primary-200 outline-none transition-all"
+              className="w-48 pl-9 pr-8 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 text-zinc-50 placeholder-zinc-500 outline-none transition-all"
             />
-            <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
             {isSearching && (
-              <button type="button" onClick={onClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+              <button type="button" onClick={onClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors">
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </form>
-          <button onClick={() => router.push('/')} className="text-gray-500 hover:text-gray-700 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer hidden sm:block" title="Back to Dashboard">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
+          <button onClick={() => router.push('/')} className="text-zinc-400 hover:text-zinc-50 p-1.5 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer hidden sm:block" title="Back to Dashboard">
+            <ArrowLeft className="w-5 h-5" />
           </button>
-          <button onClick={onLeave} className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center border border-red-100 shadow-sm">
+          <button onClick={onLeave} className="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center border border-red-500/20">
             <span className="hidden sm:inline">Leave</span>
-            <svg className="w-4 h-4 sm:ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
+            <LogOut className="w-4 h-4 sm:ml-1.5" />
           </button>
         </div>
       </div>
 
       {/* Mobile Search — Below header, visible only on small screens */}
-      <div className="sm:hidden px-4 py-2 border-b border-gray-200 bg-gray-50">
+      <div className="sm:hidden px-4 py-2 border-b border-zinc-900 bg-zinc-950">
         <form onSubmit={onSearch} className="flex items-center relative w-full">
           <input
             type="text"
             placeholder="Search messages..."
             value={searchInput}
             onChange={(e) => onSearchInputChange(e.target.value)}
-            className="w-full pl-9 pr-8 py-1.5 bg-white border border-gray-300 rounded-full text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none"
+            className="w-full pl-9 pr-8 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 text-zinc-50 placeholder-zinc-500 outline-none transition-all"
           />
-          <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
           {isSearching && (
-            <button type="button" onClick={onClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+            <button type="button" onClick={onClearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors">
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
         </form>

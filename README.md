@@ -1,6 +1,6 @@
 <div align="center">
 
-# <img src="./public/logo.svg" alt="SyncSphere Logo" width="40" height="40" style="vertical-align: -8px;" /> SyncSphere — Real-Time Chat Architecture
+# <img src="./public/syncsphere-logo.svg" alt="SyncSphere Logo" width="40" height="40" style="vertical-align: -8px;" /> SyncSphere — Real-Time Chat Architecture
 
 **A highly scalable, real-time chat application built with Next.js, Node.js, WebSockets, Redis Pub/Sub, and PostgreSQL.**
 
@@ -108,15 +108,21 @@ SyncSphere/
 │   │   ├── components/              # ChatHeader, MessageList, etc.
 │   │   └── hooks/                   # useMessages, useWebSocket, useTyping
 │   ├── page.tsx                     # Dashboard & Authentication
+│   ├── layout.tsx                   # Root Layout & Sonner Toaster
+│   ├── error.tsx                    # Global Error Boundary
 │   └── globals.css                  # Tailwind styles
 ├── backend/                         # Node.js WebSocket & REST Server
 │   ├── src/
+│   │   ├── env.ts                   # Environment Variables Validation (Zod)
 │   │   ├── index.ts                 # Express & WS Server Entry
-│   │   └── redis.ts                 # Redis Pub/Sub Singleton
+│   │   ├── services/                # Redis Pub/Sub Singleton
+│   │   ├── ws/                      # WebSocket Handlers
+│   │   └── routes/                  # Express REST Routes
 │   ├── prisma/
 │   │   └── schema.prisma            # DB Models (User, Room, Message)
 │   └── Dockerfile                   # Backend Container Config
-├── public/                          # Static Assets (Images, Icons)
+├── public/
+│   └── syncsphere-logo.svg          # Cache-busted Geometric Logo
 ├── docker-compose.yml               # Multi-container orchestration
 └── next.config.ts                   # Next.js Proxy Configuration
 ```

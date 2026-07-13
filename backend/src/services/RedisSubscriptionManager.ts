@@ -1,7 +1,8 @@
 import { createClient, RedisClientType } from 'redis';
 import { WebSocket } from 'ws';
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+import { env } from '../env.js';
+const REDIS_URL = env.REDIS_URL;
 
 export class RedisSubscriptionManager {
   private static instance: RedisSubscriptionManager;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Message } from '../../../../types';
 import MessageBubble from './MessageBubble';
+import { Loader2 } from 'lucide-react';
 
 interface MessageListProps {
   messages: Message[];
@@ -34,7 +35,7 @@ export default function MessageList({
   return (
     <div
       ref={messagesContainerRef}
-      className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] bg-gray-50"
+      className="flex-1 overflow-y-auto p-4 sm:p-6 bg-zinc-950"
     >
       <div className="max-w-3xl mx-auto flex flex-col justify-end min-h-full">
 
@@ -43,14 +44,11 @@ export default function MessageList({
             <button
               onClick={onLoadMore}
               disabled={loadingMore}
-              className="bg-white border border-gray-200 text-gray-600 hover:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm hover:shadow transition-all disabled:opacity-50 cursor-pointer"
+              className="bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm transition-all disabled:opacity-50 cursor-pointer"
             >
               {loadingMore ? (
                 <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-zinc-500" />
                   Loading...
                 </span>
               ) : 'Load Older Messages'}
@@ -59,8 +57,8 @@ export default function MessageList({
         )}
 
         {isSearching && (
-          <div className="bg-yellow-50 text-yellow-800 p-3 rounded-xl text-center text-sm font-medium border border-yellow-200 mb-6 shadow-sm mx-auto max-w-sm">
-            Search results for: <span className="font-bold">&quot;{searchQuery}&quot;</span>
+          <div className="bg-teal-500/10 text-teal-400 p-3 rounded-xl text-center text-sm font-medium border border-teal-500/20 mb-6 shadow-sm mx-auto max-w-sm">
+            Search results for: <span className="font-bold text-teal-300">&quot;{searchQuery}&quot;</span>
           </div>
         )}
 
