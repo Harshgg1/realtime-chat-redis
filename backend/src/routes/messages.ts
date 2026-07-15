@@ -5,6 +5,24 @@ import { authMiddleware } from '../auth.js';
 const router = Router();
 router.use(authMiddleware);
 
+// Get pinned messages for a room
+router.get('/:roomId/pinned', async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const messages = await prisma.message.findMany({
+      where: { roomId, isPinned: true, isDeleted: false },
+      orderBy: { pinnedAt: 'desc' },
+      include: {
+        sender: { select: { id: true, username: true } },
+      },
+    });
+    res.json({ messages });
+  } catch (error) {
+    console.error('Get pinned messages error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get messages for a room with pagination
 router.get('/:roomId', async (req, res) => {
   try {

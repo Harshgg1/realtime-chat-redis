@@ -54,6 +54,9 @@ model Message {
   content   String
   isEdited  Boolean  @default(false)
   isDeleted Boolean  @default(false)
+  isPinned  Boolean  @default(false)
+  pinnedAt  DateTime?
+  pinnedById String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -9,6 +9,7 @@ import { useWebSocket } from './hooks/useWebSocket';
 import { useRoomData } from './hooks/useRoomData';
 import { useMessages } from './hooks/useMessages';
 import { useTyping } from './hooks/useTyping';
+import { usePinnedMessages } from './hooks/usePinnedMessages';
 
 // Components
 import Sidebar from './components/Sidebar';
@@ -16,6 +17,7 @@ import ChatHeader from './components/ChatHeader';
 import MessageList from './components/MessageList';
 import TypingIndicator from './components/TypingIndicator';
 import ChatInput from './components/ChatInput';
+import PinnedMessagesBanner from './components/PinnedMessagesBanner';
 
 export default function RoomPage() {
   const params = useParams();
@@ -31,7 +33,11 @@ export default function RoomPage() {
   const onMessageRef = useRef<(data: any) => void>(() => {});
 
   const { wsRef, wsStatus, sendWsMessage } = useWebSocket(token, roomId, onMessageRef);
-  const { roomName, members, handlePresence, handleLeave } = useRoomData(token, roomId);
+  const { roomName, members, adminId, handlePresence, handleLeave } = useRoomData(token, roomId);
+  const {
+    pinnedMessages, isPinnedOpen, setIsPinnedOpen, handlePinEvent
+  } = usePinnedMessages(token, roomId);
+  
   const {
     messages, hasMore, loadingMore,
     inputValue, setInputValue, editingMessageId,
@@ -39,9 +45,11 @@ export default function RoomPage() {
     isSearching, searchQuery, searchInput, setSearchInput,
     handleSearch, clearSearch,
     handleNewMessage, handleEditMessage, handleDeleteMessage, handleReadReceipt,
+    handlePinMessageEvent, handleUnpinMessageEvent, handlePin, handleUnpin,
     getReceiptStatus,
     messagesEndRef, messagesContainerRef,
   } = useMessages(token, roomId, currentUser, sendWsMessage, wsRef);
+  
   const { typingUsers, emitTyping, stopTyping, handleTypingEvent } = useTyping(roomId, sendWsMessage, wsRef, currentUser);
 
   // Wire WS message dispatcher — always uses latest handler references
@@ -52,6 +60,14 @@ export default function RoomPage() {
         case 'typing':          handleTypingEvent(data);  break;
         case 'message_edited':  handleEditMessage(data);  break;
         case 'message_deleted': handleDeleteMessage(data); break;
+        case 'message_pinned':  
+          handlePinMessageEvent(data); 
+          handlePinEvent(data);
+          break;
+        case 'message_unpinned': 
+          handleUnpinMessageEvent(data); 
+          handlePinEvent(data);
+          break;
         case 'presence':        handlePresence(data);     break;
         case 'read_receipt':    handleReadReceipt(data);  break;
         case 'error':           console.error('WS error:', data.message); break;
@@ -70,6 +86,8 @@ export default function RoomPage() {
     setInputValue(e.target.value);
     emitTyping();
   }
+
+  const isAdmin = currentUser?.id === adminId;
 
   // --- Loading state ---
   if (!token || !currentUser) {
@@ -106,9 +124,18 @@ export default function RoomPage() {
           onClearSearch={clearSearch}
         />
 
+        <PinnedMessagesBanner
+          pinnedMessages={pinnedMessages}
+          isOpen={isPinnedOpen}
+          setIsOpen={setIsPinnedOpen}
+          isAdmin={isAdmin}
+          onUnpin={handleUnpin}
+        />
+
         <MessageList
           messages={messages}
           currentUserId={currentUser.id}
+          isAdmin={isAdmin}
           hasMore={hasMore}
           loadingMore={loadingMore}
           isSearching={isSearching}
@@ -116,6 +143,8 @@ export default function RoomPage() {
           onLoadMore={loadMore}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onPin={handlePin}
+          onUnpin={handleUnpin}
           getReceiptStatus={getReceiptStatus}
           messagesEndRef={messagesEndRef}
           messagesContainerRef={messagesContainerRef}

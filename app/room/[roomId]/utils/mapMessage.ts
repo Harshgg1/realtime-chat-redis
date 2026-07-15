@@ -9,6 +9,9 @@ export function mapMessage(m: any): Message {
     createdAt: m.createdAt,
     isEdited: m.isEdited,
     isDeleted: m.isDeleted,
+    isPinned: m.isPinned,
+    pinnedAt: m.pinnedAt,
+    pinnedById: m.pinnedById,
     readReceipts: (m.readReceipts || []).map((r: any) => ({
       userId: r.userId || r.user?.id,
       username: r.username || r.user?.username || 'Unknown',

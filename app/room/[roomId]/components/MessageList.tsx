@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 interface MessageListProps {
   messages: Message[];
   currentUserId: string;
+  isAdmin: boolean;
   hasMore: boolean;
   loadingMore: boolean;
   isSearching: boolean;
@@ -13,6 +14,8 @@ interface MessageListProps {
   onLoadMore: () => void;
   onEdit: (msg: Message) => void;
   onDelete: (msgId: string) => void;
+  onPin: (msgId: string) => void;
+  onUnpin: (msgId: string) => void;
   getReceiptStatus: (msg: Message) => string;
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
   messagesContainerRef: React.RefObject<HTMLDivElement | null>;
@@ -21,6 +24,7 @@ interface MessageListProps {
 export default function MessageList({
   messages,
   currentUserId,
+  isAdmin,
   hasMore,
   loadingMore,
   isSearching,
@@ -28,6 +32,8 @@ export default function MessageList({
   onLoadMore,
   onEdit,
   onDelete,
+  onPin,
+  onUnpin,
   getReceiptStatus,
   messagesEndRef,
   messagesContainerRef,
@@ -75,9 +81,12 @@ export default function MessageList({
                 key={msg.id}
                 message={msg}
                 isOwn={isOwn}
+                isAdmin={isAdmin}
                 showHeader={showHeader}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                onPin={onPin}
+                onUnpin={onUnpin}
                 receiptStatus={isOwn ? getReceiptStatus(msg) : 'Sent'}
               />
             );

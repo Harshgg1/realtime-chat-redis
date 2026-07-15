@@ -7,6 +7,7 @@ import { Member } from '../../../../types';
 export function useRoomData(token: string | null, roomId: string) {
   const router = useRouter();
   const [roomName, setRoomName] = useState('');
+  const [adminId, setAdminId] = useState<string | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
 
   // Fetch room info
@@ -17,7 +18,9 @@ export function useRoomData(token: string | null, roomId: string) {
     })
       .then((res) => res.json())
       .then((data) => {
-        setRoomName(data.name || data.room?.name || roomId);
+        const roomData = data.room || data;
+        setRoomName(roomData.name || roomId);
+        if (roomData.adminId) setAdminId(roomData.adminId);
       })
       .catch(() => {});
   }, [token, roomId]);
@@ -71,5 +74,5 @@ export function useRoomData(token: string | null, roomId: string) {
     router.push('/');
   }, [token, roomId, router]);
 
-  return { roomName, members, handlePresence, handleLeave };
+  return { roomName, members, adminId, handlePresence, handleLeave };
 }

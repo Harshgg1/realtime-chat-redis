@@ -18,6 +18,9 @@ export interface Message {
   createdAt: string;
   isEdited?: boolean;
   isDeleted?: boolean;
+  isPinned?: boolean;
+  pinnedAt?: string;
+  pinnedById?: string;
   readReceipts?: ReadReceipt[];
 }
 

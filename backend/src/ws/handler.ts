@@ -250,6 +250,66 @@ export function setupWebSocket(server: http.Server): void {
             break;
           }
 
+          case 'pin_message': {
+            const { messageId } = p;
+            const message = await prisma.message.findUnique({
+              where: { id: messageId },
+              include: { room: true },
+            });
+            if (!message) {
+              extWs.send(JSON.stringify({ type: 'error', message: 'Message not found' }));
+              return;
+            }
+            if (message.room.adminId !== extWs.userId) {
+              extWs.send(JSON.stringify({ type: 'error', message: 'Only room admin can pin messages' }));
+              return;
+            }
+            const pinnedCount = await prisma.message.count({
+              where: { roomId: message.roomId, isPinned: true, isDeleted: false },
+            });
+            if (pinnedCount >= 10) {
+              extWs.send(JSON.stringify({ type: 'error', message: 'Maximum of 10 pinned messages allowed' }));
+              return;
+            }
+            await prisma.message.update({
+              where: { id: messageId },
+              data: { isPinned: true, pinnedAt: new Date(), pinnedById: extWs.userId },
+            });
+            await manager.publish(message.roomId, {
+              type: 'message_pinned',
+              messageId,
+              roomId: message.roomId,
+              pinnedBy: extWs.username,
+            });
+            break;
+          }
+
+          case 'unpin_message': {
+            const { messageId } = p;
+            const message = await prisma.message.findUnique({
+              where: { id: messageId },
+              include: { room: true },
+            });
+            if (!message) {
+              extWs.send(JSON.stringify({ type: 'error', message: 'Message not found' }));
+              return;
+            }
+            if (message.room.adminId !== extWs.userId) {
+              extWs.send(JSON.stringify({ type: 'error', message: 'Only room admin can unpin messages' }));
+              return;
+            }
+            await prisma.message.update({
+              where: { id: messageId },
+              data: { isPinned: false, pinnedAt: null, pinnedById: null },
+            });
+            await manager.publish(message.roomId, {
+              type: 'message_unpinned',
+              messageId,
+              roomId: message.roomId,
+            });
+            break;
+          }
+
           case 'mark_seen': {
             const { roomId, messageIds } = p;
 

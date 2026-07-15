@@ -114,6 +114,24 @@ export function useMessages(
     );
   }, []);
 
+  const handlePinMessageEvent = useCallback((data: any) => {
+    const { messageId, pinnedBy } = data;
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId ? { ...m, isPinned: true, pinnedAt: new Date().toISOString() } : m
+      )
+    );
+  }, []);
+
+  const handleUnpinMessageEvent = useCallback((data: any) => {
+    const { messageId } = data;
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId ? { ...m, isPinned: false, pinnedAt: undefined, pinnedById: undefined } : m
+      )
+    );
+  }, []);
+
   // User actions
 
   function handleSend(e: React.FormEvent) {
@@ -141,6 +159,14 @@ export function useMessages(
 
   function handleDelete(msgId: string) {
     sendWsMessage('delete_message', { messageId: msgId });
+  }
+
+  function handlePin(msgId: string) {
+    sendWsMessage('pin_message', { messageId: msgId });
+  }
+
+  function handleUnpin(msgId: string) {
+    sendWsMessage('unpin_message', { messageId: msgId });
   }
 
   async function loadMore() {
@@ -239,6 +265,10 @@ export function useMessages(
     handleEditMessage,
     handleDeleteMessage,
     handleReadReceipt,
+    handlePinMessageEvent,
+    handleUnpinMessageEvent,
+    handlePin,
+    handleUnpin,
     getReceiptStatus,
     messagesEndRef,
     messagesContainerRef,
