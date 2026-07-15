@@ -58,21 +58,21 @@ export default function MessageBubble({ message: msg, isOwn, isAdmin, showHeader
           {msg.isEdited && !msg.isDeleted && <span className="italic text-zinc-600">(edited)</span>}
 
           {showActions && (
-            <div className={`hidden group-hover:flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-900 px-2 py-0.5 rounded-md border border-zinc-800 absolute top-0 ${isOwn ? '-left-12 -translate-x-full' : '-right-12 translate-x-full'} -translate-y-1/2 z-10`}>
+            <div className={`hidden group-hover:flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity bg-zinc-900 p-1 rounded-md border border-zinc-800 shadow-sm absolute top-1/2 -translate-y-1/2 ${isOwn ? 'right-full mr-2' : 'left-full ml-2'} z-10 before:absolute before:inset-y-0 ${isOwn ? 'before:-right-2 before:w-2' : 'before:-left-2 before:w-2'} before:bg-transparent`}>
               {canPin && (
-                <button onClick={() => msg.isPinned ? onUnpin(msg.id) : onPin(msg.id)} className="hover:text-teal-400 transition-colors cursor-pointer flex items-center" title={msg.isPinned ? "Unpin" : "Pin"}>
+                <button onClick={() => msg.isPinned ? onUnpin(msg.id) : onPin(msg.id)} className="hover:text-teal-400 text-zinc-400 transition-colors cursor-pointer p-1.5 rounded hover:bg-zinc-800" title={msg.isPinned ? "Unpin" : "Pin"}>
                   {msg.isPinned ? <PinOff className="w-3.5 h-3.5" /> : <Pin className="w-3.5 h-3.5" />}
                 </button>
               )}
-              {canPin && (canEdit || canDelete) && <div className="w-px h-3 bg-zinc-800"></div>}
+              {canPin && (canEdit || canDelete) && <div className="w-px h-4 bg-zinc-800 mx-0.5"></div>}
               {canEdit && (
-                <button onClick={() => onEdit(msg)} className="hover:text-teal-400 transition-colors cursor-pointer flex items-center" title="Edit">
+                <button onClick={() => onEdit(msg)} className="hover:text-teal-400 text-zinc-400 transition-colors cursor-pointer p-1.5 rounded hover:bg-zinc-800" title="Edit">
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
               )}
-              {canEdit && canDelete && <div className="w-px h-3 bg-zinc-800"></div>}
+              {canEdit && canDelete && <div className="w-px h-4 bg-zinc-800 mx-0.5"></div>}
               {canDelete && (
-                <button onClick={() => onDelete(msg.id)} className="hover:text-red-400 transition-colors cursor-pointer flex items-center" title="Delete">
+                <button onClick={() => onDelete(msg.id)} className="hover:text-red-400 text-zinc-400 transition-colors cursor-pointer p-1.5 rounded hover:bg-zinc-800" title="Delete">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               )}
