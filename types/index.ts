@@ -10,6 +10,13 @@ export interface Room {
   createdBy?: string;
 }
 
+export interface Member {
+  id: string;
+  username: string;
+  online?: boolean;
+  lastSeen?: string;
+}
+
 export interface Message {
   id: string;
   content: string;
@@ -30,9 +37,3 @@ export interface ReadReceipt {
   status: string;
 }
 
-export interface Member {
-  id: string;
-  username: string;
-  online?: boolean;
-  lastSeen?: string;
-}
