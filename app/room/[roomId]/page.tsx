@@ -77,6 +77,7 @@ export default function RoomPage() {
   });
 
   // --- Orchestrated handlers ---
+  
   function onSend(e: React.FormEvent) {
     handleSend(e);
     stopTyping();

@@ -13,6 +13,7 @@ export default function GlobalError({
   useEffect(() => {
     console.error('UI Crashed:', error);
   }, [error]);
+  
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
